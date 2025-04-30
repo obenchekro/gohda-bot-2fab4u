@@ -1,13 +1,14 @@
 import requests
 import random
-from dank_meme_extractor.word_list import SEARCH_TERM_LIST
+from libs.dank_meme_extractor.word_list import SEARCH_TERM_LIST
 
 class TenorClient:
     def __init__(self, api_key):
         self.api_key = api_key
         self.base_url = "https://tenor.googleapis.com/v2/search"
 
-    def get_random_keyword(self):
+    @staticmethod
+    def get_random_keyword():
         return random.choice(SEARCH_TERM_LIST)
     
     async def get_gif_url(self):
