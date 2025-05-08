@@ -17,7 +17,7 @@ class DiscordClient(discord.Client):
         self.token = token
         self.giphy_client = TenorClient(giphy_token)
         self.llm_client = LLMClient(hf_token)
-        self.MAX_MESSAGE_LIMIT = 2000
+        self.MAX_MESSAGE_CHUNK_SIZE_LIMIT = 2000
 
         self.reddit_client = RedditVNTLFetcher(
             client_id=reddit_client_id,
@@ -74,15 +74,15 @@ class DiscordClient(discord.Client):
             return None
         
     async def send_message_in_chunks(self, channel_id, message, logger):
-        if len(message) > self.MAX_MESSAGE_LIMIT:
-            logger.warning("Message too long, splitting into parts.")
-            chunks = [message[idx: idx + self.MAX_MESSAGE_LIMIT] for idx in range(0, len(message), self.MAX_MESSAGE_LIMIT)]
-            for chunk in chunks:
+        if len(message) > self.MAX_MESSAGE_CHUNK_SIZE_LIMIT:
+            logger.warning("Message too long, splitting into chunks.")
+            chunks = [message[idx: idx + self.MAX_MESSAGE_CHUNK_SIZE_LIMIT] for idx in range(0, len(message), self.MAX_MESSAGE_CHUNK_SIZE_LIMIT)]
+            for chunk_idx, chunk in enumerate(chunks):
                 await self.post_message(channel_id, chunk, logger)
-                logger.info("Sent part of the VNTS update.")
+                logger.info(f"Sent chunk no°{chunk_idx} according to the strategy of chunking sizes.")
         else:
             await self.post_message(channel_id, message, logger)
-            logger.info("Successfully dispatched the VNTS update.")
+            logger.info("Successfully sended the whole message.")
 
     async def dispatch_vn_tl_updates_daily(self, target_channel_id, logger):
         try:
@@ -105,6 +105,23 @@ class DiscordClient(discord.Client):
                 await self.post_message(target_channel_id, fallback_message, logger)
         except Exception as e:
             logger.error(f"Error while dispatching VNTS update: {e}")
+            
+    async def dispatch_new_vg_annoucements(self, target_channel_id, logger):
+        try:
+            logger.info("Fetching the latest vg big annoucements post from Reddit...")
+            latest_game_releases = self.reddit_client.fetch_latest_game_releases()
+
+            if latest_game_releases:
+                await self.post_message(target_channel_id, "@everyone @here", logger)
+                for game_release in latest_game_releases:
+                    latest_game_releases_message_with_ping = f"{game_release['url']}"
+                    await self.post_message(target_channel_id, latest_game_releases_message_with_ping, logger)
+            else:
+                fallback_message = "No latest vg big annoucements post found. Sending fallback message."
+                logger.warning(fallback_message)
+                await self.post_message(target_channel_id, fallback_message, logger)
+        except Exception as e:
+            logger.error(f"Error while dispatching the latest vg big annoucements post: {e}")
 
     def get_random_member(self, member_list):
         return random.choice(member_list.split('|'))

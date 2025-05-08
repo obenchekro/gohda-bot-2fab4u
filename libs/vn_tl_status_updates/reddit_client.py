@@ -64,3 +64,33 @@ class RedditVNTLFetcher:
             if logger:
                 logger.error(f"Error fetching post content: {e}")
             return None
+    
+    def fetch_latest_game_releases(self, subreddits=None, keywords=None, limit=50, logger=None):
+        if subreddits is None:
+            subreddits = ["gaming", "games", "ps5", "XboxSeriesX", "pcgaming", "NintendoSwitch", "JRPG", "WesternRPG", "indiegames", "shmups", "gamecollecting", "Kojima"]
+        if keywords is None:
+            keywords = [
+            "release", "out now", "new game", "launch", "platformer", "jrpg", "western rpg", "shoot 'em up", "kojima", "action rpg", "metroidvania", "roguelike", "fps", "tactical rpg"]
+
+        games_releases = []
+        try:
+            for sub in subreddits:
+                subreddit = self.reddit.subreddit(sub)
+                if logger:
+                    logger.info(f"Scanning subreddit: {sub}")
+                for post in subreddit.new(limit=limit):
+                    title_lower = post.title.lower()
+                    if any(k in title_lower for k in keywords):
+                        games_releases.append({
+                            "title": post.title,
+                            "url": post.url,
+                            "subreddit": sub,
+                            "timestamp": post.created_utc
+                        })
+                        if logger:
+                            logger.info(f"Game release found: {post.title} ({post.url})")
+        except Exception as e:
+            if logger:
+                logger.error(f"Error fetching game releases: {e}")
+
+        return games_releases

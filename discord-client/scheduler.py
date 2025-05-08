@@ -24,3 +24,8 @@ class Scheduler:
         while True:
             await self.client.dispatch_vn_tl_updates_daily(channel_id, logger)
             await asyncio.sleep(delay)
+    
+    async def schedule_dispatch_vg_releases_message(self, channel_id, delay, logger):
+        while True:
+            await self.client.dispatch_new_vg_annoucements(channel_id, logger)
+            await asyncio.sleep(delay)
