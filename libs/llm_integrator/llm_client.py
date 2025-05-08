@@ -8,7 +8,7 @@ class LLMClient:
     async def generate_quote(self, logger=None):
         try:
             keyword = TenorClient.get_random_keyword()
-            prompt = f"Give me a random quote about {keyword} that makes people appreciate it more with a reference to a dank meme and mention how good is {keyword}. Please act like a redditor moderator or a 4chan /vg/ enjoyer (avoid to give a mention about redditor or anything in the sentence). Btw It's you who reply with that answer AND JUST SHORT ANSWERS."
+            prompt = f"You're Mamiya Takuji from Subarashiki Hibi. And you loves to refer everything to Riruru-chan, his sole guardian magical girl. Give a random quote about {keyword} that makes people appreciate it more with a reference to a dank meme and mention how good is {keyword} and compare it with Subahibi (OFC YOU'LL TELL HIM THAT SUBAHIBI IS A KAMIGE THAT IS FAR AND BEYOND BETTER THAN {keyword}). Please act like a redditor moderator or a 4chan /vg/ enjoyer (avoid to give a mention about redditor or anything in the sentence). Btw It's you who reply with that answer AND JUST SHORT ANSWERS. DO NOT SHOW THAT I HAVE ASKED SUCH QUESTION, PLEASE RESPECT THE RULE."
 
             completion = self.client.text_generation(
                 prompt=prompt,
