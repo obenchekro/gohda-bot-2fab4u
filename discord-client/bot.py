@@ -21,7 +21,9 @@ REDDIT_CLIENT_SECRET = os.getenv('REDDIT_CLIENT_SECRET')
 
 MEMBER_LIST = os.getenv('MEMBERS_LIST')
 
-DELAY = 10
+GIF_DELAY = 10
+QUOTE_DELAY = 60 * 60 * 60 * 5
+VN_TL_MESSAGE_DELAY = 604800
 
 client = DiscordClient(TOKEN, TENOR_API_KEY, HUGGING_FACE_API_KEY, REDDIT_CLIENT_ID, REDDIT_CLIENT_SECRET)
 scheduler = Scheduler(client)
@@ -32,9 +34,9 @@ logger = logging.getLogger('discord_bot')
 @client.event
 async def on_ready():
     logger.info(f'Logged in as {client.user}')
-    asyncio.create_task(scheduler.schedule_gif(GIF_CHANNEL_ID, DELAY, logger))
-    asyncio.create_task(scheduler.schedule_mention(QUOTE_CHANNEL_ID, DELAY, MEMBER_LIST, logger))
-    asyncio.create_task(client.dispatch_vn_tl_updates_daily(QUOTE_CHANNEL_ID, logger))
+    asyncio.create_task(scheduler.schedule_gif(GIF_CHANNEL_ID, GIF_DELAY, logger))
+    asyncio.create_task(scheduler.schedule_mention(QUOTE_CHANNEL_ID, QUOTE_DELAY, MEMBER_LIST, logger))
+    asyncio.create_task(scheduler.schedule_dispatch_vn_tl_message(QUOTE_CHANNEL_ID, VN_TL_MESSAGE_DELAY, logger))
 
 if __name__ == '__main__':
     client.run(TOKEN)

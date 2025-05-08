@@ -19,3 +19,8 @@ class Scheduler:
         while True:
             await self.client.mention_with_llm_response(channel_id, member_list, logger)
             await asyncio.sleep(delay)
+
+    async def schedule_dispatch_vn_tl_message(self, channel_id, delay, logger):
+        while True:
+            await self.client.dispatch_vn_tl_updates_daily(channel_id, logger)
+            await asyncio.sleep(delay)
