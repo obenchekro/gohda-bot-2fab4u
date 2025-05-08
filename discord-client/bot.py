@@ -12,6 +12,7 @@ load_dotenv()
 TOKEN = os.getenv('ACCESS_TOKEN')
 GIF_CHANNEL_ID = os.getenv('GIF_CHANNEL_ID')
 QUOTE_CHANNEL_ID = os.getenv('QUOTE_CHANNEL_ID')
+VN_TL_CHANNEL_ID = os.getenv('VN_TL_CHANNEL_ID')
 
 TENOR_API_KEY = os.getenv('TENOR_API_KEY')
 HUGGING_FACE_API_KEY = os.getenv('HUGGING_FACE_API_KEY')
@@ -36,7 +37,7 @@ async def on_ready():
     logger.info(f'Logged in as {client.user}')
     asyncio.create_task(scheduler.schedule_gif(GIF_CHANNEL_ID, GIF_DELAY, logger))
     asyncio.create_task(scheduler.schedule_mention(QUOTE_CHANNEL_ID, QUOTE_DELAY, MEMBER_LIST, logger))
-    asyncio.create_task(scheduler.schedule_dispatch_vn_tl_message(QUOTE_CHANNEL_ID, VN_TL_MESSAGE_DELAY, logger))
+    asyncio.create_task(scheduler.schedule_dispatch_vn_tl_message(VN_TL_CHANNEL_ID, VN_TL_MESSAGE_DELAY, logger))
 
 if __name__ == '__main__':
     client.run(TOKEN)
