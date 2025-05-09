@@ -5,7 +5,7 @@ import sys
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 from libs.dank_meme_extractor.tenor_client import TenorClient
 from libs.llm_integrator.llm_client import LLMClient
-from libs.vn_tl_status_updates.reddit_client import RedditVNTLFetcher
+from libs.reddit_threads.reddit_client import RedditVNTLFetcher
 
 class DiscordClient(discord.Client):
     def __init__(self, token, giphy_token, hf_token, reddit_client_id, reddit_client_secret, logger=None):
@@ -38,10 +38,6 @@ class DiscordClient(discord.Client):
         else:
             logger.error("Failed to get GIF URL...")
             await channel.send(":ggohda:")
-
-    def run_bot(self, logger):
-        logger.info("Starting to bootstrap the bot in the discord client...")
-        self.run(self.token)
     
     async def mention_with_llm_response(self, channel_id, member_list, logger):
         try:
@@ -59,19 +55,6 @@ class DiscordClient(discord.Client):
             logger.info("Message with mention and quote sent.")
         except Exception as e:
             logger.error(f"Error while mentioning member and sending quote: {e}")
-
-    async def get_last_message(self, channel_id, bot_id, logger):
-        try:
-            channel = await self.fetch_channel(channel_id)
-            async for message in channel.history(limit=100):
-                if message.author.id == bot_id:
-                    logger.info(f"Last message from the weekly vn tl update bot {bot_id}: {message.content}")
-                    return message.content
-            logger.info(f"No recent message found from the weekly vn tl update bot {bot_id} in channel {channel_id}.")
-            return None
-        except Exception as e:
-            logger.error(f"Error while retrieving the last message from user {bot_id} in channel {channel_id}: {e}")
-            return None
         
     async def send_message_in_chunks(self, channel_id, message, logger):
         if len(message) > self.MAX_MESSAGE_CHUNK_SIZE_LIMIT:
@@ -114,8 +97,7 @@ class DiscordClient(discord.Client):
             if latest_game_releases:
                 await self.post_message(target_channel_id, "@everyone @here", logger)
                 for game_release in latest_game_releases:
-                    latest_game_releases_message_with_ping = f"{game_release['url']}"
-                    await self.post_message(target_channel_id, latest_game_releases_message_with_ping, logger)
+                    await self.post_message(target_channel_id, game_release['url'], logger)
             else:
                 fallback_message = "No latest vg big annoucements post found. Sending fallback message."
                 logger.warning(fallback_message)
