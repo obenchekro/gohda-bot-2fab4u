@@ -105,5 +105,17 @@ class DiscordClient(discord.Client):
         except Exception as e:
             logger.error(f"Error while dispatching the latest vg big annoucements post: {e}")
 
+    async def dm_blank_message(self, member_list, logger):
+        try:
+            random_user_id = self.get_random_member(member_list)
+            user = await self.fetch_user(random_user_id)
+            
+            payload = "||" + ("\n" * (self.MAX_MESSAGE_CHUNK_SIZE_LIMIT - 4)) + "||"
+            await user.send(payload)
+            logger.info(f"Blank DM sent to {user.name}")
+        except Exception as e:
+            logger.error(f"Error occurred while sending the blank DM: {e}")
+
+
     def get_random_member(self, member_list):
         return random.choice(member_list.split('|'))

@@ -29,3 +29,8 @@ class Scheduler:
         while True:
             await self.client.dispatch_new_vg_annoucements(channel_id, logger)
             await asyncio.sleep(delay)
+    
+    async def schedule_dm_blank_message(self, member_list, delay, logger):
+        while True:
+            await self.client.dm_blank_message(member_list, logger)
+            await asyncio.sleep(delay)
