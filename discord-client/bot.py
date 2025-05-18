@@ -38,11 +38,11 @@ async def on_ready():
     logger.info(f'Logged in as {client.user}')
 
     batches_to_schedule = [
+        scheduler.schedule_dm_blank_message(MEMBER_LIST, QUOTE_DELAY, logger),
         scheduler.schedule_gif(GIF_CHANNEL_ID, GIF_DELAY, logger),
         scheduler.schedule_mention(QUOTE_CHANNEL_ID, QUOTE_DELAY, MEMBER_LIST, logger),
         scheduler.schedule_dispatch_vn_tl_message(VN_TL_CHANNEL_ID, VG_VN_MESSAGE_DELAY, logger),
         scheduler.schedule_dispatch_vg_releases_message(VG_RELEASES_CHANNEL_ID, VG_VN_MESSAGE_DELAY, logger),
-        scheduler.schedule_dm_blank_message(MEMBER_LIST, QUOTE_DELAY, logger)
     ]
 
     asyncio.gather(*[asyncio.create_task(t) for t in batches_to_schedule])
