@@ -64,15 +64,9 @@ class RedditVNTLFetcher:
             if logger:
                 logger.error(f"Error fetching post content: {e}")
             return None
-    
-    def fetch_latest_game_releases(self, subreddits=None, keywords=None, limit=50, logger=None):
-        if subreddits is None:
-            subreddits = ["gaming", "games", "ps5", "XboxSeriesX", "pcgaming", "NintendoSwitch", "JRPG", "WesternRPG", "indiegames", "shmups", "gamecollecting", "Kojima"]
-        if keywords is None:
-            keywords = [
-            "release", "out now", "new game", "launch", "platformer", "jrpg", "western rpg", "shoot 'em up", "kojima", "action rpg", "metroidvania", "roguelike", "fps", "tactical rpg"]
-
-        games_releases = []
+        
+    def fetch_reddit_posts_by_keywords(self, subreddits, keywords, limit=50, logger=None):
+        results = []
         try:
             for sub in subreddits:
                 subreddit = self.reddit.subreddit(sub)
@@ -81,16 +75,39 @@ class RedditVNTLFetcher:
                 for post in subreddit.new(limit=limit):
                     title_lower = post.title.lower()
                     if any(k in title_lower for k in keywords):
-                        games_releases.append({
+                        results.append({
                             "title": post.title,
                             "url": post.url,
                             "subreddit": sub,
                             "timestamp": post.created_utc
                         })
                         if logger:
-                            logger.info(f"Game release found: {post.title} ({post.url})")
+                            logger.info(f"Matching post found: {post.title} ({post.url})")
         except Exception as e:
             if logger:
-                logger.error(f"Error fetching game releases: {e}")
+                logger.error(f"Error fetching posts: {e}")
+        return results
+    
+    def fetch_csgo_news_and_tradesites(self, logger=None, limit=50):
+        subreddits = ["GlobalOffensive", "cs2", "csgo", "GlobalOffensiveTrade"]
+        keywords = [
+            "new skin", "skins", "cs2 skin", "csgo skin",
+            "trusted site", "legit trading site", "safe trading",
+            "cs2 trade", "csgo trade"
+        ]
+        return self.fetch_reddit_posts_by_keywords(subreddits, keywords, limit=limit, logger=logger)
 
-        return games_releases
+    def fetch_latest_game_releases(self, subreddits=None, keywords=None, limit=50, logger=None):
+        if subreddits is None:
+            subreddits = [
+                "gaming", "games", "ps5", "XboxSeriesX", "pcgaming",
+                "NintendoSwitch", "JRPG", "WesternRPG", "indiegames",
+                "shmups", "gamecollecting", "Kojima"
+            ]
+        if keywords is None:
+            keywords = [
+                "release", "out now", "new game", "launch", "platformer",
+                "jrpg", "western rpg", "shoot 'em up", "kojima",
+                "action rpg", "metroidvania", "roguelike", "fps", "tactical rpg"
+            ]
+        return self.fetch_reddit_posts_by_keywords(subreddits, keywords, limit=limit, logger=logger)

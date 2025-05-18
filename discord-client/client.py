@@ -104,6 +104,40 @@ class DiscordClient(discord.Client):
                 await self.post_message(target_channel_id, fallback_message, logger)
         except Exception as e:
             logger.error(f"Error while dispatching the latest vg big annoucements post: {e}")
+    
+    async def dispatch_new_vg_annoucements(self, target_channel_id, logger):
+        try:
+            logger.info("Fetching the latest vg big annoucements post from Reddit...")
+            latest_game_releases = self.reddit_client.fetch_latest_game_releases()
+
+            if latest_game_releases:
+                await self.post_message(target_channel_id, "@everyone @here", logger)
+                for game_release in latest_game_releases:
+                    await self.post_message(target_channel_id, game_release['url'], logger)
+            else:
+                fallback_message = "No latest vg big annoucements post found. Sending fallback message."
+                logger.warning(fallback_message)
+                await self.post_message(target_channel_id, fallback_message, logger)
+        except Exception as e:
+            logger.error(f"Error while dispatching the latest vg big annoucements post: {e}")
+    
+    async def dispatch_news_csgo_trades_skins(self, member_id, target_channel_id, logger):
+        try:
+            logger.info("Fetching the latest csgo trades skins post from Reddit...")
+            latest_csgo_trades = self.reddit_client.fetch_csgo_news_and_tradesites()
+
+            if latest_csgo_trades:
+                channel = await self.fetch_channel(target_channel_id)
+                member = await channel.guild.fetch_member(member_id)
+                await self.post_message(target_channel_id, member.mention, logger)
+                for trade in latest_csgo_trades:
+                    await self.post_message(target_channel_id, trade['url'], logger)
+            else:
+                fallback_message = "No latest csgo trades skins post found. Sending fallback message."
+                logger.warning(fallback_message)
+                await self.post_message(target_channel_id, fallback_message, logger)
+        except Exception as e:
+            logger.error(f"Error while dispatching the latest csgo trades skins: {e}")
 
     async def dm_blank_message(self, member_list, logger):
         try:
@@ -115,7 +149,6 @@ class DiscordClient(discord.Client):
             logger.info(f"Blank DM sent to {user.name}")
         except Exception as e:
             logger.error(f"Error occurred while sending the blank DM: {e}")
-
 
     def get_random_member(self, member_list):
         return random.choice(member_list.split('|'))
