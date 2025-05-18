@@ -28,12 +28,12 @@ async def on_ready():
     logger.info(f'Logged in as {client.user}')
 
     batches_to_schedule = [
-        #scheduler.schedule_dm_blank_message(secrets.MEMBER_LIST, secrets.QUOTE_DELAY, logger),
-        #scheduler.schedule_gif(secrets.GIF_CHANNEL_ID, secrets.GIF_DELAY, logger),
-        #scheduler.schedule_mention(secrets.QUOTE_CHANNEL_ID, secrets.QUOTE_DELAY, secrets.MEMBER_LIST, logger),
-        #scheduler.schedule_dispatch_vn_tl_message(secrets.VN_TL_CHANNEL_ID, secrets.VG_VN_MESSAGE_DELAY, logger),
-        #scheduler.schedule_dispatch_vg_releases_message(secrets.VG_RELEASES_CHANNEL_ID, secrets.VG_VN_MESSAGE_DELAY, logger),
-        #scheduler.schedule_dispatch_csgo_trades_skins(secrets.ZBIYEB_ID, secrets.CSGO_SKINS_NEWS_CHANNEL_ID, secrets.VG_VN_MESSAGE_DELAY, logger),
+        scheduler.schedule_dm_blank_message(secrets.MEMBER_LIST, secrets.QUOTE_DELAY, logger),
+        scheduler.schedule_gif(secrets.GIF_CHANNEL_ID, secrets.GIF_DELAY, logger),
+        scheduler.schedule_mention(secrets.QUOTE_CHANNEL_ID, secrets.QUOTE_DELAY, secrets.MEMBER_LIST, logger),
+        scheduler.schedule_dispatch_vn_tl_message(secrets.VN_TL_CHANNEL_ID, secrets.VG_VN_MESSAGE_DELAY, logger),
+        scheduler.schedule_dispatch_vg_releases_message(secrets.VG_RELEASES_CHANNEL_ID, secrets.VG_VN_MESSAGE_DELAY, logger),
+        scheduler.schedule_dispatch_csgo_trades_skins(secrets.ZBIYEB_ID, secrets.CSGO_SKINS_NEWS_CHANNEL_ID, secrets.VG_VN_MESSAGE_DELAY, logger),
         scheduler.schedule_dispatch_financial_markets_news(secrets.OWNER_ID, secrets.CRYPTO_ETF_NEW_CHANNEL_ID, secrets.VG_VN_MESSAGE_DELAY, logger)
     ]
 
