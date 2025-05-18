@@ -86,3 +86,15 @@ class Scheduler:
             channel_id,
             logger
         )
+    
+    async def schedule_dispatch_financial_markets_news(self, member_id, channel_id, delay, logger):
+        await self.__loop_task(
+            delay,
+            logger,
+            "schedule_dispatch_financial_markets_news",
+            self.client.dispatch_news_financial_markets,
+            member_id,
+            channel_id,
+            logger
+        )
+

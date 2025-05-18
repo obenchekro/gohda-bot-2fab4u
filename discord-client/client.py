@@ -138,6 +138,35 @@ class DiscordClient(discord.Client):
                 await self.post_message(target_channel_id, fallback_message, logger)
         except Exception as e:
             logger.error(f"Error while dispatching the latest csgo trades skins: {e}")
+    
+    async def dispatch_news_financial_markets(self, member_id, target_channel_id, logger):
+        try:
+            logger.info("Fetching the latest financial market posts (crypto, ETFs, stocks)...")
+
+            crypto_posts = self.reddit_client.fetch_crypto_news(logger=logger)
+            etf_posts = self.reddit_client.fetch_etf_news(logger=logger)
+            stock_posts = self.reddit_client.fetch_stock_market_news(logger=logger)
+
+            all_posts = crypto_posts + etf_posts + stock_posts
+
+            if all_posts:
+                channel = await self.fetch_channel(target_channel_id)
+                member = await channel.guild.fetch_member(member_id)
+                await self.post_message(target_channel_id, f"{member.mention}\n📊 Here's your financial market briefing:", logger)
+
+                categories = [("📈 Crypto", crypto_posts), ("💼 ETFs", etf_posts), ("🇺🇸/🇫🇷 Stocks", stock_posts)]
+                for title, posts in categories:
+                    if posts:
+                        await self.post_message(target_channel_id, f"**{title}**", logger)
+                        for post in posts:
+                            await self.post_message(target_channel_id, post['url'], logger)
+            else:
+                msg = "No financial news found (crypto, ETFs, or stock markets)."
+                logger.warning(msg)
+                await self.post_message(target_channel_id, msg, logger)
+
+        except Exception as e:
+            logger.error(f"Error while dispatching financial market news: {e}")
 
     async def dm_blank_message(self, member_list, logger):
         try:

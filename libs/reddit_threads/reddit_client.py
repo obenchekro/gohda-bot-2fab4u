@@ -65,7 +65,7 @@ class RedditVNTLFetcher:
                 logger.error(f"Error fetching post content: {e}")
             return None
         
-    def fetch_reddit_posts_by_keywords(self, subreddits, keywords, limit=50, logger=None):
+    def __fetch_reddit_posts_by_keywords(self, subreddits, keywords, limit=50, logger=None):
         results = []
         try:
             for sub in subreddits:
@@ -95,7 +95,7 @@ class RedditVNTLFetcher:
             "trusted site", "legit trading site", "safe trading",
             "cs2 trade", "csgo trade"
         ]
-        return self.fetch_reddit_posts_by_keywords(subreddits, keywords, limit=limit, logger=logger)
+        return self.__fetch_reddit_posts_by_keywords(subreddits, keywords, limit=limit, logger=logger)
 
     def fetch_latest_game_releases(self, subreddits=None, keywords=None, limit=50, logger=None):
         if subreddits is None:
@@ -110,4 +110,47 @@ class RedditVNTLFetcher:
                 "jrpg", "western rpg", "shoot 'em up", "kojima",
                 "action rpg", "metroidvania", "roguelike", "fps", "tactical rpg"
             ]
-        return self.fetch_reddit_posts_by_keywords(subreddits, keywords, limit=limit, logger=logger)
+        return self.__fetch_reddit_posts_by_keywords(subreddits, keywords, limit=limit, logger=logger)
+
+    def fetch_crypto_news(self, subreddits=None, keywords=None, limit=50, logger=None):
+        subreddits = ["CryptoCurrency", "Bitcoin", "ethereum", "CryptoMarkets"]
+        keywords = ["bitcoin", "ethereum", "btc", "eth", "crypto", "bullish", "bearish", "pump", "crash", "halving"]
+        return self.__fetch_reddit_posts_by_keywords(subreddits, keywords, limit=limit, logger=logger)
+
+    def fetch_etf_news(self, subreddits=None, keywords=None, limit=50, logger=None):
+        subreddits = ["investing", "ETFs", "financialindependence"]
+        keywords = ["etf", "spy", "qqq", "vti", "vanguard", "blackrock", "dividend", "expense ratio"]
+        return self.__fetch_reddit_posts_by_keywords(subreddits, keywords, limit=limit, logger=logger)
+
+    def fetch_stock_market_news(self, subreddits=None, keywords=None, limit=50, logger=None):
+        subreddits = ["stocks", "wallstreetbets", "europeanstocks", "francefinance"]
+        keywords = ["cac 40", "s&p 500", "sp500", "nasdaq", "bull market", "buy", "sell", "stock alert", "earning report"]
+        return self.__fetch_reddit_posts_by_keywords(subreddits, keywords, limit=limit, logger=logger)
+
+    def fetch_when_to_buy_threads(self, subreddits=None, keywords=None, limit=50, logger=None):
+        subreddits = ["stocks", "CryptoCurrency", "investing"]
+        keywords = ["should I buy", "when to buy", "is it too late", "sell now", "entry point", "good time", "technical analysis"]
+        return self.__fetch_reddit_posts_by_keywords(subreddits, keywords, limit=limit, logger=logger)
+    
+if __name__ == "__main__":
+    import logging
+
+    # Configuration du logger
+    logging.basicConfig(level=logging.INFO)
+    logger = logging.getLogger("RedditLogger")
+
+    # Initialisation du fetcher avec tes identifiants Reddit
+    fetcher = RedditVNTLFetcher(
+            client_id="NYrCcZm_wOrQMCH0OIbtmw",
+            client_secret="pfS8sSpNNRBPpl9OLBxj8cP8yj1-ag"
+        )
+
+    def print_results(title, posts):
+        print(f"\n🔷 {title}")
+        for p in posts[:5]:
+            print(f"[{p['subreddit']}] {p['title']} → {p['url']}")
+
+    print_results("Crypto News", fetcher.fetch_crypto_news(logger=logger))
+    print_results("ETF News", fetcher.fetch_etf_news(logger=logger))
+    print_results("Stock Market News", fetcher.fetch_stock_market_news(logger=logger))
+    print_results("Threads: When to Buy/Sell", fetcher.fetch_when_to_buy_threads(logger=logger))
