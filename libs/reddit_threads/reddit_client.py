@@ -88,7 +88,7 @@ class RedditVNTLFetcher:
                 logger.error(f"Error fetching posts: {e}")
         return results
     
-    def fetch_csgo_news_and_tradesites(self, logger=None, limit=50):
+    def fetch_csgo_news_and_tradesites(self, logger=None, limit=300):
         subreddits = ["GlobalOffensive", "cs2", "csgo", "GlobalOffensiveTrade"]
         keywords = [
             "new skin", "skins", "cs2 skin", "csgo skin",
