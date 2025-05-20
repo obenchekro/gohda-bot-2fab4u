@@ -39,5 +39,9 @@ async def on_ready():
 
     asyncio.gather(*[asyncio.create_task(t) for t in batches_to_schedule])
 
+@client.event
+async def on_message(message):
+    await client.handle_mention_message(message, logger)
+
 if __name__ == '__main__':
     client.run(secrets.TOKEN)

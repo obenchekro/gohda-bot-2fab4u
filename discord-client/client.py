@@ -1,3 +1,4 @@
+import re
 import discord
 import os
 import random
@@ -55,7 +56,34 @@ class DiscordClient(discord.Client):
             logger.info("Message with mention and quote sent.")
         except Exception as e:
             logger.error(f"Error while mentioning member and sending quote: {e}")
-        
+    
+    async def handle_mention_message(self, message, logger):
+        if message.author == self.user:
+            return
+
+        if self.user.mentioned_in(message):
+            try:
+                cleaned_msg = re.sub(rf"<@!?{self.user.id}>", "", message.content).strip()
+
+                if not cleaned_msg:
+                    await self.post_message(
+                        message.channel.id,
+                        "You mentionned the jackass of me and can't mimically asking for anything? You pathetic cranking soulja boy.",
+                        logger
+                    )
+                    return
+
+                reply = await self.llm_client.generate_quote_from_user_input(cleaned_msg, logger=logger)
+                await self.post_message(message.channel.id, reply, logger)
+
+            except Exception as e:
+                await self.post_message(
+                    message.channel.id,
+                    "Something went wrong in the vortex of Riruru-chan's dimension 🌀",
+                    logger
+                )
+                logger.error(f"[on_message error]: {e}")
+
     async def send_message_in_chunks(self, channel_id, message, logger):
         if len(message) > self.MAX_MESSAGE_CHUNK_SIZE_LIMIT:
             logger.warning("Message too long, splitting into chunks.")
