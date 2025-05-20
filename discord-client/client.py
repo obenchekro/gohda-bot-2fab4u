@@ -104,23 +104,7 @@ class DiscordClient(discord.Client):
                 await self.post_message(target_channel_id, fallback_message, logger)
         except Exception as e:
             logger.error(f"Error while dispatching the latest vg big annoucements post: {e}")
-    
-    async def dispatch_new_vg_annoucements(self, target_channel_id, logger):
-        try:
-            logger.info("Fetching the latest vg big annoucements post from Reddit...")
-            latest_game_releases = self.reddit_client.fetch_latest_game_releases()
 
-            if latest_game_releases:
-                await self.post_message(target_channel_id, "@everyone @here", logger)
-                for game_release in latest_game_releases:
-                    await self.post_message(target_channel_id, game_release['url'], logger)
-            else:
-                fallback_message = "No latest vg big annoucements post found. Sending fallback message."
-                logger.warning(fallback_message)
-                await self.post_message(target_channel_id, fallback_message, logger)
-        except Exception as e:
-            logger.error(f"Error while dispatching the latest vg big annoucements post: {e}")
-    
     async def dispatch_news_csgo_trades_skins(self, member_id, target_channel_id, logger):
         try:
             logger.info("Fetching the latest csgo trades skins post from Reddit...")

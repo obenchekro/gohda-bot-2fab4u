@@ -131,26 +131,3 @@ class RedditVNTLFetcher:
         subreddits = ["stocks", "CryptoCurrency", "investing"]
         keywords = ["should I buy", "when to buy", "is it too late", "sell now", "entry point", "good time", "technical analysis"]
         return self.__fetch_reddit_posts_by_keywords(subreddits, keywords, limit=limit, logger=logger)
-    
-if __name__ == "__main__":
-    import logging
-
-    # Configuration du logger
-    logging.basicConfig(level=logging.INFO)
-    logger = logging.getLogger("RedditLogger")
-
-    # Initialisation du fetcher avec tes identifiants Reddit
-    fetcher = RedditVNTLFetcher(
-            client_id="NYrCcZm_wOrQMCH0OIbtmw",
-            client_secret="pfS8sSpNNRBPpl9OLBxj8cP8yj1-ag"
-        )
-
-    def print_results(title, posts):
-        print(f"\n🔷 {title}")
-        for p in posts[:5]:
-            print(f"[{p['subreddit']}] {p['title']} → {p['url']}")
-
-    print_results("Crypto News", fetcher.fetch_crypto_news(logger=logger))
-    print_results("ETF News", fetcher.fetch_etf_news(logger=logger))
-    print_results("Stock Market News", fetcher.fetch_stock_market_news(logger=logger))
-    print_results("Threads: When to Buy/Sell", fetcher.fetch_when_to_buy_threads(logger=logger))
