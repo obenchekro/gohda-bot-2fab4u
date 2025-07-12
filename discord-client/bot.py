@@ -17,7 +17,7 @@ logger = logging.getLogger('discord_bot')
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Run a Discord bot (gohda or zaim)")
-    parser.add_argument('--bot', choices=['gohda', 'zaim'], required=True, help="Type of bot to run (main or mirror)")
+    parser.add_argument('--bot', choices=['gohda', 'zaim'], required=True, help="Type of bot to run (gohda or zaim)")
     return parser.parse_args()
 
 async def run_bot(bot_type):
