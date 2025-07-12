@@ -9,7 +9,7 @@ from libs.llm_integrator.llm_client import LLMClient
 from libs.reddit_threads.reddit_client import RedditVNTLFetcher
 
 class DiscordClient(discord.Client):
-    def __init__(self, token, giphy_token, hf_token, reddit_client_id, reddit_client_secret, logger=None):
+    def __init__(self, token, giphy_token, reddit_client_id, reddit_client_secret, logger=None):
         intents = discord.Intents.default()
         intents.messages = True
         intents.guilds = True
@@ -17,7 +17,7 @@ class DiscordClient(discord.Client):
         super().__init__(intents=intents)
         self.token = token
         self.giphy_client = TenorClient(giphy_token)
-        self.llm_client = LLMClient(hf_token)
+        self.llm_client = LLMClient()
         self.MAX_MESSAGE_CHUNK_SIZE_LIMIT = 2000
 
         self.reddit_client = RedditVNTLFetcher(

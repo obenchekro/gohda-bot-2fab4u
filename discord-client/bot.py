@@ -14,7 +14,6 @@ from scheduler import Scheduler
 client = DiscordClient(
     secrets.TOKEN, 
     secrets.TENOR_API_KEY, 
-    secrets.HUGGING_FACE_API_KEY, 
     secrets.REDDIT_CLIENT_ID, 
     secrets.REDDIT_CLIENT_SECRET
 )
