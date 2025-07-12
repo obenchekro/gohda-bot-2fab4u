@@ -26,7 +26,7 @@ async def run_bot(bot_type):
     elif bot_type == "zaim":
         token = secrets.TOKEN_ZAIM
     else:
-        raise ValueError("Bot type not recognized. Use --bot main or --bot mirror.")
+        raise ValueError("Bot type not recognized. Use --bot gohda or --bot zaim.")
 
     client = DiscordClient(
         token=token,
