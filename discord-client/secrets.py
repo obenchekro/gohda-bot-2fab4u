@@ -1,6 +1,7 @@
 import os
 
-TOKEN = os.getenv('ACCESS_TOKEN')
+TOKEN_GOHDA = os.getenv('ACCESS_TOKEN_GOHDA')
+TOKEN_ZAIM = os.getenv('ACCESS_TOKEN_ZAIM')
 GIF_CHANNEL_ID = os.getenv('GIF_CHANNEL_ID')
 QUOTE_CHANNEL_ID = os.getenv('QUOTE_CHANNEL_ID')
 VN_TL_CHANNEL_ID = os.getenv('VN_TL_CHANNEL_ID')

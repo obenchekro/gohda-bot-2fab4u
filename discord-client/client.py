@@ -9,13 +9,14 @@ from libs.llm_integrator.llm_client import LLMClient
 from libs.reddit_threads.reddit_client import RedditVNTLFetcher
 
 class DiscordClient(discord.Client):
-    def __init__(self, token, giphy_token, reddit_client_id, reddit_client_secret, logger=None):
+    def __init__(self, token, giphy_token, reddit_client_id, reddit_client_secret, bot_type, logger=None):
         intents = discord.Intents.default()
         intents.messages = True
         intents.guilds = True
 
         super().__init__(intents=intents)
         self.token = token
+        self.bot_type = bot_type
         self.giphy_client = TenorClient(giphy_token)
         self.llm_client = LLMClient()
         self.MAX_MESSAGE_CHUNK_SIZE_LIMIT = 2000
@@ -40,7 +41,7 @@ class DiscordClient(discord.Client):
             logger.error("Failed to get GIF URL...")
             await channel.send(":ggohda:")
     
-    async def mention_with_llm_response(self, channel_id, member_list, logger):
+    async def mention_with_llm_response(self, channel_id, member_list, bot_type, logger):
         try:
             channel = await self.fetch_channel(channel_id)
             member_id = self.get_random_member(member_list)
@@ -49,7 +50,7 @@ class DiscordClient(discord.Client):
             mention = member.mention
             logger.info(f"Mention resolved: {mention}")
 
-            quote = await self.llm_client.generate_quote(logger=logger)
+            quote = await self.llm_client.generate_quote(bot_type, logger=logger)
             message = f"{mention} {quote}"
 
             await channel.send(message)
@@ -57,7 +58,7 @@ class DiscordClient(discord.Client):
         except Exception as e:
             logger.error(f"Error while mentioning member and sending quote: {e}")
     
-    async def handle_mention_message(self, message, logger):
+    async def handle_mention_message(self, message, bot_type, logger):
         if message.author == self.user:
             return
 
@@ -73,7 +74,7 @@ class DiscordClient(discord.Client):
                     )
                     return
 
-                reply = await self.llm_client.generate_quote_from_user_input(cleaned_msg, logger=logger)
+                reply = await self.llm_client.generate_quote_from_user_input(cleaned_msg, bot_type, logger=logger)
                 await self.post_message(message.channel.id, reply, logger)
 
             except Exception as e:

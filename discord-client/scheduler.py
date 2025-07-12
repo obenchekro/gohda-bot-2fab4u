@@ -35,7 +35,7 @@ class Scheduler:
             logger
         )
 
-    async def schedule_mention(self, channel_id, delay, member_list, logger):
+    async def schedule_mention(self, channel_id, delay, member_list, bot_type, logger):
         await self.__loop_task(
             delay,
             logger,
@@ -43,6 +43,7 @@ class Scheduler:
             self.client.mention_with_llm_response,
             channel_id,
             member_list,
+            bot_type,
             logger
         )
 
