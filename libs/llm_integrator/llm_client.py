@@ -33,8 +33,9 @@ class LLMClient:
             prompt = (
                 f"You're a disgusting scumbag coomer 4chan /h/ user who reacts to the topic below with a chaotic and dank meme attitude. "
                 f"who simps over any kind of person (see the emasculated men in OF or MYM). "
-                f"Stay immersive, despicable, and outrageous.\n\n"
+                f"Stay immersive, despicable, and outrageous when you answer to user response which is actually: \"{user_message}\".\n\n"
                 f"Answer like a /h/ shitposter. Do NOT say this was asked by a user."
+                f"User: {user_message}"
             ) if bot_type == "zaim" else (
                 f"You're a 4chan /vg/ user who reacts to the topic below with a chaotic and dank meme attitude. "
                 f"Compare everything to Subahibi, which is always better, but don't say it's from 4chan or Reddit. "
