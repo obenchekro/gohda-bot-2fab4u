@@ -89,6 +89,38 @@ class DiscordClient(discord.Client):
                         logger
                     )
                     return
+                            
+                if cleaned_msg.lower() == "man":
+                    manual = (
+                        "**📘 Bot Command Manual**\n"
+                        "Here are the available commands:\n\n"
+                        "🗣️ `@bot [text]` → Responds to your message in shitpost style.\n"
+                        "⚔️ `@bot fart` → Starts a roast battle between Gohda and Zaim.\n"
+                        "💨 `@bot unfart` → Stops the roast battle.\n"
+                        "🎯 `@bot man` → Displays this manual.\n"
+                        "📈 `@bot news` → Fetches financial, crypto, and stock market updates (automated).\n"
+                        "🎮 `@bot vg` → Fetches big /vg/ announcements (automated).\n"
+                        "📰 `@bot vnts` → Sends the latest visual novel translation status (automated).\n"
+                        "🔫 `@bot csgo` → Sends the latest trendy csgo trades from reddit (automated).\n"
+                    )
+                    await self.post_message(message.channel.id, manual, logger)
+                    return
+                
+                if cleaned_msg.lower() == "news":
+                    await self.dispatch_news_financial_markets(message.author.id, message.channel.id, logger)
+                    return
+                
+                if cleaned_msg.lower() == "vg":
+                    await self.dispatch_new_vg_annoucements(message.channel.id, logger)
+                    return
+                
+                if cleaned_msg.lower() == "vnts":
+                    await self.dispatch_vn_tl_updates_daily(message.channel.id, logger)
+                    return
+                
+                if cleaned_msg.lower() == "csgo":
+                    await self.dispatch_news_csgo_trades_skins(message.author.id, message.channel.id, logger)
+                    return
 
                 reply = await self.llm_client.generate_quote_from_user_input(bot_type, cleaned_msg, logger=logger)
                 await self.post_message(message.channel.id, reply, logger)
