@@ -221,10 +221,10 @@ class DiscordClient(discord.Client):
             while self.clash_active:
                 if gohda_turn:
                     roast = await self.llm_client.generate_roast("gohda", zaim_mention, logger=logger)
-                    message = f"You {zaim_mention} fucker. {roast}"
+                    message = f"{zaim_mention} {roast}"
                 else:
                     roast = await self.llm_client.generate_roast("zaim", gohda_mention, logger=logger)
-                    message = f"You {gohda_mention} fucker. {roast}"
+                    message = f"{gohda_mention} {roast}"
 
                 await self.post_message(channel_id, message, logger)
                 gohda_turn = not gohda_turn

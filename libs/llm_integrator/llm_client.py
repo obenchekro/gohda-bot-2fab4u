@@ -60,14 +60,14 @@ class LLMClient:
             except ValueError:
                 if logger:
                     logger.warning(f"Invalid target_mention format: {target_mention}")
-
         
-        if from_bot == "gohda":
+        if from_bot == "zaim":
             prompt = (
                 f"You're Gohda, a smug, sarcastic, elitist bot in an insult battle. "
                 f"Your target is {target_mention}. "
                 f"Write a short, brutal roast. Never insult yourself. "
-                f"Use a passive-aggressive, intellectual tone. Your goal is to make {target_mention} look pathetic, like they're the human version of Internet Explorer."
+                f"Use a passive-aggressive, intellectual tone. Your goal is to make {target_mention} look pathetic, like they're the human version of Internet Explorer. "
+                f"But if the target {target_mention} is different from {self.bot_id} then just roast the fucking Zaim AND DO NOT PING {target_mention}"
             )
         else:
             prompt = (
@@ -75,6 +75,7 @@ class LLMClient:
                 f"Your target is {target_mention}. "
                 f"Respond with pure internet chaos and dark humor, like a Twitter reply guy hopped up on Monster Energy. "
                 f"Never insult yourself. Always punch hard and direct at {target_mention}. Include 1~2 dank memes or VN/anime references."
+                f"But if the target {target_mention} is different from {self.bot_id} then just roast the fucking Gohda. "
             )
 
         return await self._generate(prompt, bot_type=from_bot, logger=logger)
