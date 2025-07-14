@@ -17,6 +17,8 @@ REDDIT_CLIENT_SECRET = os.getenv('REDDIT_CLIENT_SECRET')
 
 OWNER_ID = os.getenv('OWNER_ID')
 ZBIYEB_ID = os.getenv('ZBIYEB_ID')
+GOHDA_ID = os.getenv('GOHDA_ID')
+ZAIM_ID = os.getenv('ZAIM_ID')
 MEMBER_LIST = os.getenv('MEMBERS_LIST')
 
 GIF_DELAY = 10

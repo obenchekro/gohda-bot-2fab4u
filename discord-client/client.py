@@ -1,3 +1,4 @@
+import asyncio
 import re
 import discord
 import os
@@ -19,6 +20,7 @@ class DiscordClient(discord.Client):
         self.bot_type = bot_type
         self.giphy_client = TenorClient(giphy_token)
         self.llm_client = LLMClient()
+        self.clash_active = False
         self.MAX_MESSAGE_CHUNK_SIZE_LIMIT = 2000
 
         self.reddit_client = RedditVNTLFetcher(
@@ -58,13 +60,27 @@ class DiscordClient(discord.Client):
         except Exception as e:
             logger.error(f"Error while mentioning member and sending quote: {e}")
     
-    async def handle_mention_message(self, message, bot_type, logger):
+    async def handle_mention_message(self, message, bot_type, gohda_id, zaim_id, logger):
         if message.author == self.user:
+            return
+             
+        if "fart" in message.content.lower() and not self.clash_active:
+            await self.trigger_clash(message.channel.id, gohda_id, zaim_id, logger)
+            return
+
+        if "unfart" in message.content.lower() and self.clash_active:
+            await self.stop_clash(message.channel.id, logger)
             return
 
         if self.user.mentioned_in(message):
             try:
                 cleaned_msg = re.sub(rf"<@!?{self.user.id}>", "", message.content).strip()
+                
+                if message.author.bot:
+                    target_mention = f"<@{message.author.id}>"
+                    roast = await self.llm_client.generate_roast(bot_type, target_mention, logger=logger)
+                    await self.post_message(message.channel.id, roast, logger)
+                    return
 
                 if not cleaned_msg:
                     await self.post_message(
@@ -74,7 +90,7 @@ class DiscordClient(discord.Client):
                     )
                     return
 
-                reply = await self.llm_client.generate_quote_from_user_input(cleaned_msg, bot_type, logger=logger)
+                reply = await self.llm_client.generate_quote_from_user_input(bot_type, cleaned_msg, logger=logger)
                 await self.post_message(message.channel.id, reply, logger)
 
             except Exception as e:
@@ -191,6 +207,47 @@ class DiscordClient(discord.Client):
             logger.info(f"Blank DM sent to {user.name}")
         except Exception as e:
             logger.error(f"Error occurred while sending the blank DM: {e}")
+
+    async def clash_between_gohda_and_zaim(self, channel_id, gohda_id, zaim_id, logger):
+        self.clash_active = True
+
+        gohda_mention = f"<@{gohda_id}>"
+        zaim_mention = f"<@{zaim_id}>"
+
+        logger.info("🔥 Clash between Gohda and Zaim started.")
+        gohda_turn = True
+
+        try:
+            while self.clash_active:
+                if gohda_turn:
+                    roast = await self.llm_client.generate_roast("gohda", zaim_mention, logger=logger)
+                    message = f"You {zaim_mention} fucker. {roast}"
+                else:
+                    roast = await self.llm_client.generate_roast("zaim", gohda_mention, logger=logger)
+                    message = f"You {gohda_mention} fucker. {roast}"
+
+                await self.post_message(channel_id, message, logger)
+                gohda_turn = not gohda_turn
+                await asyncio.sleep(5)
+
+        except asyncio.CancelledError:
+            logger.info("Clash coroutine cancelled by unfart.")
+        finally:
+            await self.post_message(channel_id, "🛑 Gohda and Zaim stopped roasting. The arena is silent.", logger)
+            logger.info("Clash ended.")
+        
+   
+    async def trigger_clash(self, channel_id, gohda_id, zaim_id, logger):
+        self.clash_active = True
+        await self.post_message(channel_id, "⚔️ Fart detected. Gohda vs Zaim initiated!", logger)
+        self.clash_task = asyncio.create_task(self.clash_between_gohda_and_zaim(channel_id, gohda_id, zaim_id, logger))
+
+    async def stop_clash(self, channel_id, logger):
+        self.clash_active = False
+        if self.clash_task:
+            self.clash_task.cancel()
+            self.clash_task = None
+        await self.post_message(channel_id, "💨 The fart has been unfarted. Peace restored.", logger)
 
     def get_random_member(self, member_list):
         return random.choice(member_list.split('|'))
