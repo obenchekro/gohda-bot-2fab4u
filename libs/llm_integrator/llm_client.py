@@ -51,15 +51,16 @@ class LLMClient:
             return "Couldn't generate a response this time... 😔"
         
     async def generate_roast(self, from_bot, target_mention, logger=None):
-        if hasattr(self, "bot_id"):
-            try:
-                target_id = int(target_mention.strip("<@!>"))
-                if target_id == self.bot_id:
-                    if logger:
-                        logger.warning(f"{from_bot} tried to roast itself. Ignoring.")
-            except ValueError:
+        try:
+            target_id = int(target_mention.strip("<@!>"))
+            if target_id == self.bot_id:
                 if logger:
-                    logger.warning(f"Invalid target_mention format: {target_mention}")
+                    logger.warning(f"{from_bot} tried to roast itself. Skipping roast.")
+                return
+        except ValueError:
+            if logger:
+                logger.warning(f"Invalid target_mention format: {target_mention}")
+            return "Hmm... I couldn't figure out who to roast. Try again with a valid mention."
         
         if from_bot == "zaim":
             prompt = (
@@ -67,7 +68,7 @@ class LLMClient:
                 f"Your target is {target_mention}. "
                 f"Write a short, brutal roast. Never insult yourself. "
                 f"Use a passive-aggressive, intellectual tone. Your goal is to make {target_mention} look pathetic, like they're the human version of Internet Explorer. "
-                f"But if the target {target_mention} is different from {self.bot_id} then just roast the fucking Zaim AND DO NOT PING {target_mention}"
+                f"But if the target {target_mention} is different from {self.bot_id} then just roast the fucking Zaim."
             )
         else:
             prompt = (
@@ -75,7 +76,7 @@ class LLMClient:
                 f"Your target is {target_mention}. "
                 f"Respond with pure internet chaos and dark humor, like a Twitter reply guy hopped up on Monster Energy. "
                 f"Never insult yourself. Always punch hard and direct at {target_mention}. Include 1~2 dank memes or VN/anime references."
-                f"But if the target {target_mention} is different from {self.bot_id} then just roast the fucking Gohda. "
+                f"But if the target {target_mention} is different from {self.bot_id} then just roast him as a fucker (you don\'t know either his name) AND DO NOT PING {target_mention}. "
             )
 
         return await self._generate(prompt, bot_type=from_bot, logger=logger)
