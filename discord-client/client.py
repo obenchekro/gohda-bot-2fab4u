@@ -35,13 +35,13 @@ class DiscordClient(discord.Client):
     
     async def send_gif(self, channel_id, logger):
         gif_url = await self.giphy_client.get_gif_url()
-        channel = await self.fetch_channel(channel_id)
+        
         if gif_url:
             logger.info(f'Media GIF {gif_url} has been successfully rendered...')
-            await channel.send(gif_url)
+            await self.post_message(channel_id, gif_url, logger)
         else:
             logger.error("Failed to get GIF URL...")
-            await channel.send(":ggohda:")
+            await self.post_message(channel_id, ":ggohda:", logger)
     
     async def mention_with_llm_response(self, channel_id, member_list, bot_type, logger):
         try:
@@ -53,7 +53,7 @@ class DiscordClient(discord.Client):
             logger.info(f"Mention resolved: {mention}")
 
             quote = await self.llm_client.generate_quote(bot_type, logger=logger)
-            message = f"{mention} {quote}"
+            message = f"{mention} ²²{quote}"
 
             await channel.send(message)
             logger.info("Message with mention and quote sent.")
@@ -79,7 +79,7 @@ class DiscordClient(discord.Client):
                 if message.author.bot:
                     target_mention = f"<@{message.author.id}>"
                     roast = await self.llm_client.generate_roast(bot_type, target_mention, logger=logger)
-                    await self.post_message(message.channel.id, roast, logger)
+                    await self.send_message_in_chunks(message.channel.id, roast, logger)
                     return
 
                 if not cleaned_msg:
@@ -95,6 +95,7 @@ class DiscordClient(discord.Client):
                         "**📘 Bot Command Manual**\n"
                         "Here are the available commands:\n\n"
                         "🗣️ `@bot [text]` → Responds to your message in shitpost style.\n"
+                        "🖼️ `@bot [gif]` → Post a gif related to a dank meme of a specific VG/VN."
                         "⚔️ `@bot fart` → Starts a roast battle between Gohda and Zaim.\n"
                         "💨 `@bot unfart` → Stops the roast battle.\n"
                         "🎯 `@bot man` → Displays this manual.\n"
@@ -106,6 +107,10 @@ class DiscordClient(discord.Client):
                     await self.post_message(message.channel.id, manual, logger)
                     return
                 
+                if cleaned_msg.lower() == "gif":
+                    await self.send_gif(message.channel.id, message.channel.id, logger)
+                    return 
+
                 if cleaned_msg.lower() == "news":
                     await self.dispatch_news_financial_markets(message.author.id, message.channel.id, logger)
                     return
@@ -123,7 +128,7 @@ class DiscordClient(discord.Client):
                     return
 
                 reply = await self.llm_client.generate_quote_from_user_input(bot_type, cleaned_msg, logger=logger)
-                await self.post_message(message.channel.id, reply, logger)
+                await self.send_message_in_chunks(message.channel.id, reply, logger)
 
             except Exception as e:
                 await self.post_message(
@@ -255,12 +260,12 @@ class DiscordClient(discord.Client):
                     roast = await self.llm_client.generate_roast("gohda", zaim_mention, logger=logger)
                     if roast:
                         message = f"{zaim_mention} {roast}"
-                        await self.post_message(channel_id, message, logger)
+                        await self.send_message_in_chunks(channel_id, message, logger)
                 else:
                     roast = await self.llm_client.generate_roast("zaim", gohda_mention, logger=logger)
                     if roast:
                         message = f"{gohda_mention} {roast}"
-                        await self.post_message(channel_id, message, logger)
+                        await self.send_message_in_chunks(channel_id, message, logger)
 
                 gohda_turn = not gohda_turn
                 await asyncio.sleep(5)
