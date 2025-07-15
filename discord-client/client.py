@@ -53,7 +53,7 @@ class DiscordClient(discord.Client):
             logger.info(f"Mention resolved: {mention}")
 
             quote = await self.llm_client.generate_quote(bot_type, logger=logger)
-            message = f"{mention} ²²{quote}"
+            message = f"{mention} {quote}"
 
             await channel.send(message)
             logger.info("Message with mention and quote sent.")
@@ -95,7 +95,7 @@ class DiscordClient(discord.Client):
                         "**📘 Bot Command Manual**\n"
                         "Here are the available commands:\n\n"
                         "🗣️ `@bot [text]` → Responds to your message in shitpost style.\n"
-                        "🖼️ `@bot [gif]` → Post a gif related to a dank meme of a specific VG/VN."
+                        "🖼️ `@bot [gif]` → Post a gif related to a dank meme of a specific VG/VN.\n"
                         "⚔️ `@bot fart` → Starts a roast battle between Gohda and Zaim.\n"
                         "💨 `@bot unfart` → Stops the roast battle.\n"
                         "🎯 `@bot man` → Displays this manual.\n"
@@ -108,7 +108,7 @@ class DiscordClient(discord.Client):
                     return
                 
                 if cleaned_msg.lower() == "gif":
-                    await self.send_gif(message.channel.id, message.channel.id, logger)
+                    await self.send_gif(message.channel.id, logger)
                     return 
 
                 if cleaned_msg.lower() == "news":
