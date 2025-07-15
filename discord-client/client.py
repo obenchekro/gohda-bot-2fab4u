@@ -1,6 +1,7 @@
 import asyncio
 import re
 import discord
+from discord import app_commands
 import os
 import random
 import sys
@@ -16,11 +17,15 @@ class DiscordClient(discord.Client):
         intents.guilds = True
 
         super().__init__(intents=intents)
+
+        self.tree = app_commands.CommandTree(self)
         self.token = token
         self.bot_type = bot_type
         self.giphy_client = TenorClient(giphy_token)
         self.llm_client = LLMClient()
         self.clash_active = False
+        self.gohda_id = None
+        self.zaim_id = None
         self.MAX_MESSAGE_CHUNK_SIZE_LIMIT = 2000
 
         self.reddit_client = RedditVNTLFetcher(

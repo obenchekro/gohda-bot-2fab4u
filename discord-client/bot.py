@@ -11,6 +11,7 @@ load_dotenv()
 import secrets
 from client import DiscordClient
 from scheduler import Scheduler
+from commands import Commands
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s:%(levelname)s:%(name)s: %(message)s')
 logger = logging.getLogger('discord_bot')
@@ -37,11 +38,17 @@ async def run_bot(bot_type):
     )
 
     scheduler = Scheduler(client)
+    commands = Commands(client, logger, gohda_id=secrets.GOHDA_ID, zaim_id=secrets.ZAIM_ID)
+
 
     @client.event
     async def on_ready():
         logger.info(f"[{bot_type.upper()}] Logged in as {client.user}")
         client.llm_client.bot_id = client.user.id
+        client.gohda_id = secrets.GOHDA_ID
+        client.zaim_id = secrets.ZAIM_ID
+
+        await commands.setup()
         await schedule_tasks_for_bot(scheduler, logger, bot_type)
 
     @client.event
