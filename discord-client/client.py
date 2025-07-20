@@ -108,6 +108,7 @@ class DiscordClient(discord.Client):
                         "🎮 `@bot vg` → Fetches big /vg/ announcements (automated).\n"
                         "📰 `@bot vnts` → Sends the latest visual novel translation status (automated).\n"
                         "🔫 `@bot csgo` → Sends the latest trendy csgo trades from reddit (automated).\n"
+                        "💣 `@bot punish @user` → Plays Russian Roulette by sending a blank DM to the target.\n"
                     )
                     await self.post_message(message.channel.id, manual, logger)
                     return
@@ -131,6 +132,20 @@ class DiscordClient(discord.Client):
                 if cleaned_msg.lower() == "csgo":
                     await self.dispatch_news_csgo_trades_skins(message.author.id, message.channel.id, logger)
                     return
+                
+                if cleaned_msg.lower().startswith("punish"):
+                    member_id_matched = re.search(r"<@!?(\d+)>", cleaned_msg)
+                    if member_id_matched:
+                        target_id = member_id_matched.group(1)
+                        await self.dm_blank_message(target_id, logger)
+                    else:
+                        await self.post_message(
+                            message.channel.id,
+                            "❌ No target mentioned for punishment. Use `@bot punish @user`.",
+                            logger
+                        )
+                    return
+
 
                 reply = await self.llm_client.generate_quote_from_user_input(bot_type, cleaned_msg, logger=logger)
                 await self.send_message_in_chunks(message.channel.id, reply, logger)
