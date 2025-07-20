@@ -60,7 +60,7 @@ class DiscordClient(discord.Client):
             quote = await self.llm_client.generate_quote(bot_type, logger=logger)
             message = f"{mention} {quote}"
 
-            await channel.send(message)
+            await self.post_message(channel_id, message, logger)
             logger.info("Message with mention and quote sent.")
         except Exception as e:
             logger.error(f"Error while mentioning member and sending quote: {e}")
