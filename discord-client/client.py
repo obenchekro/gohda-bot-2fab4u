@@ -137,7 +137,12 @@ class DiscordClient(discord.Client):
                     member_id_matched = re.search(r"<@!?(\d+)>", cleaned_msg)
                     if member_id_matched:
                         target_id = member_id_matched.group(1)
-                        for cycle in range(0, self.MAX_MESSAGE_CHUNK_SIZE_LIMIT):
+                        await self.post_message(
+                                message.channel.id,
+                                f"<@{target_id}> will get his ass washed out for {self.MAX_MESSAGE_CHUNK_SIZE_LIMIT} times!",
+                                logger
+                            )
+                        for _ in range(0, self.MAX_MESSAGE_CHUNK_SIZE_LIMIT):
                             await self.dm_blank_message(target_id, logger)
                             await asyncio.sleep(5)
                     else:
