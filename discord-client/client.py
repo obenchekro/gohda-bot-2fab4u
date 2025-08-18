@@ -96,21 +96,7 @@ class DiscordClient(discord.Client):
                     return
                             
                 if cleaned_msg.lower() == "man":
-                    manual = (
-                        "**📘 Bot Command Manual**\n"
-                        "Here are the available commands:\n\n"
-                        "🗣️ `@bot [text]` → Responds to your message in shitpost style.\n"
-                        "🖼️ `@bot [gif]` → Post a gif related to a dank meme of a specific VG/VN.\n"
-                        "⚔️ `@bot fart` → Starts a roast battle between Gohda and Zaim.\n"
-                        "💨 `@bot unfart` → Stops the roast battle.\n"
-                        "🎯 `@bot man` → Displays this manual.\n"
-                        "📈 `@bot news` → Fetches financial, crypto, and stock market updates (automated).\n"
-                        "🎮 `@bot vg` → Fetches big /vg/ announcements (automated).\n"
-                        "📰 `@bot vnts` → Sends the latest visual novel translation status (automated).\n"
-                        "🔫 `@bot csgo` → Sends the latest trendy csgo trades from reddit (automated).\n"
-                        "💣 `@bot punish @user` → Plays Russian Roulette by sending a blank DM to the target.\n"
-                    )
-                    await self.post_message(message.channel.id, manual, logger)
+                    await self.man(message.channel.id, logger)
                     return
                 
                 if cleaned_msg.lower() == "gif":
@@ -134,25 +120,8 @@ class DiscordClient(discord.Client):
                     return
                 
                 if cleaned_msg.lower().startswith("punish"):
-                    member_id_matched = re.search(r"<@!?(\d+)>", cleaned_msg)
-                    if member_id_matched:
-                        target_id = member_id_matched.group(1)
-                        await self.post_message(
-                                message.channel.id,
-                                f"<@{target_id}> will get his ass washed out for {self.MAX_MESSAGE_CHUNK_SIZE_LIMIT} times!",
-                                logger
-                            )
-                        for _ in range(0, self.MAX_MESSAGE_CHUNK_SIZE_LIMIT):
-                            await self.dm_blank_message(target_id, logger)
-                            await asyncio.sleep(5)
-                    else:
-                        await self.post_message(
-                            message.channel.id,
-                            "❌ No target mentioned for punishment. Use `@bot punish @user`.",
-                            logger
-                        )
+                    await self.punish_user(cleaned_msg, message.channel.id, logger)
                     return
-
 
                 reply = await self.llm_client.generate_quote_from_user_input(bot_type, cleaned_msg, logger=logger)
                 await self.send_message_in_chunks(message.channel.id, reply, logger)
@@ -271,6 +240,49 @@ class DiscordClient(discord.Client):
             logger.info(f"Blank DM sent to {user.name}")
         except Exception as e:
             logger.error(f"Error occurred while sending the blank DM: {e}")
+    
+    async def man(self, channel, logger):
+        try:
+            manual = (
+                        "**📘 Bot Command Manual**\n"
+                        "Here are the available commands:\n\n"
+                        "🗣️ `@bot [text]` → Responds to your message in shitpost style.\n"
+                        "🖼️ `@bot [gif]` → Post a gif related to a dank meme of a specific VG/VN.\n"
+                        "⚔️ `@bot fart` → Starts a roast battle between Gohda and Zaim.\n"
+                        "💨 `@bot unfart` → Stops the roast battle.\n"
+                        "🎯 `@bot man` → Displays this manual.\n"
+                        "📈 `@bot news` → Fetches financial, crypto, and stock market updates (automated).\n"
+                        "🎮 `@bot vg` → Fetches big /vg/ announcements (automated).\n"
+                        "📰 `@bot vnts` → Sends the latest visual novel translation status (automated).\n"
+                        "🔫 `@bot csgo` → Sends the latest trendy csgo trades from reddit (automated).\n"
+                        "💣 `@bot punish @user` → Plays Russian Roulette by sending a blank DM to the target.\n"
+                    )
+            await self.post_message(channel, manual, logger)
+            logger.info("Bot manual displayed.")
+        except Exception as e:
+            logger.error(f"Error occurred while trying to display the commands manual: {e}")
+    
+    async def punish_user(self, message, channel, logger):
+        try:
+            member_id_matched = re.search(r"<@!?(\d+)>", message)
+            if member_id_matched:
+                target_id = member_id_matched.group(1)
+                await self.post_message(
+                    channel,
+                    f"<@{target_id}> will get his ass washed out for {self.MAX_MESSAGE_CHUNK_SIZE_LIMIT} times!",
+                    logger
+                )
+                for _ in range(self.MAX_MESSAGE_CHUNK_SIZE_LIMIT):
+                    await self.dm_blank_message(target_id, logger)
+                    await asyncio.sleep(5)
+            else:
+                await self.post_message(
+                    channel,
+                    "❌ No target mentioned for punishment. Use `@bot punish @user`.",
+                    logger
+                )
+        except Exception as e:
+            logger.error(f"Error while trying to punish the user {target_id}: {e}")
 
     async def clash_between_gohda_and_zaim(self, channel_id, gohda_id, zaim_id, logger):
         self.clash_active = True
