@@ -111,6 +111,11 @@ class RedditVNTLFetcher:
                 "action rpg", "metroidvania", "roguelike", "fps", "tactical rpg"
             ]
         return self.__fetch_reddit_posts_by_keywords(subreddits, keywords, limit=limit, logger=logger)
+    
+    def fetch_latest_ln_wn_news(self, subreddits=None, keywords=None, limit=50, logger=None):
+        subreddits = ["LightNovels", "NovelTranslations", "webnovels"]
+        keywords = ["release", "out now", "release date", "volume", "chapter", "announcement"]
+        return self.__fetch_reddit_posts_by_keywords(subreddits, keywords, limit=limit, logger=logger)
 
     def fetch_crypto_news(self, subreddits=None, keywords=None, limit=50, logger=None):
         subreddits = ["CryptoCurrency", "Bitcoin", "ethereum", "CryptoMarkets"]

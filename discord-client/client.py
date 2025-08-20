@@ -119,6 +119,10 @@ class DiscordClient(discord.Client):
                     await self.dispatch_news_csgo_trades_skins(message.author.id, message.channel.id, logger)
                     return
                 
+                if cleaned_msg.lower() == "ln":
+                    await self.dispatch_ln_wn_news(message.author.id, message.channel.id, logger)
+                    return
+            
                 if cleaned_msg.lower().startswith("punish"):
                     await self.punish_user(cleaned_msg, message.channel.id, logger)
                     return
@@ -201,6 +205,24 @@ class DiscordClient(discord.Client):
         except Exception as e:
             logger.error(f"Error while dispatching the latest csgo trades skins: {e}")
     
+    async def dispatch_ln_wn_news(self, member_id, target_channel_id, logger):
+        try:
+            logger.info("Fetching the latest light novel/web novel posts from Reddit...")
+            latest_ln_wn_posts = self.reddit_client.fetch_latest_ln_wn_news()
+
+            if latest_ln_wn_posts:
+                channel = await self.fetch_channel(target_channel_id)
+                member = await channel.guild.fetch_member(member_id)
+                await self.post_message(target_channel_id, member.mention, logger)
+                for trade in latest_ln_wn_posts:
+                    await self.post_message(target_channel_id, trade['url'], logger)
+            else:
+                fallback_message = "No latest light novel/web novel post found. Sending fallback message."
+                logger.warning(fallback_message)
+                await self.post_message(target_channel_id, fallback_message, logger)
+        except Exception as e:
+            logger.error(f"Error while dispatching the latest light novel/web novel posts: {e}")
+    
     async def dispatch_news_financial_markets(self, member_id, target_channel_id, logger):
         try:
             logger.info("Fetching the latest financial market posts (crypto, ETFs, stocks)...")
@@ -255,6 +277,7 @@ class DiscordClient(discord.Client):
                         "🎮 `@bot vg` → Fetches big /vg/ announcements (automated).\n"
                         "📰 `@bot vnts` → Sends the latest visual novel translation status (automated).\n"
                         "🔫 `@bot csgo` → Sends the latest trendy csgo trades from reddit (automated).\n"
+                        "📚 `@bot ln` → Sends the latest light novel/web novel news from reddit (automated).\n"
                         "💣 `@bot punish @user` → Plays Russian Roulette by sending a blank DM to the target.\n"
                     )
             await self.post_message(channel, manual, logger)

@@ -1,5 +1,5 @@
 from discord import app_commands, Interaction
-from secrets import GUILD_ID
+from environments import GUILD_ID
 
 import discord
 
