@@ -61,14 +61,14 @@ async def schedule_tasks_for_bot(scheduler, logger, bot_type):
     tasks = []
     if bot_type == "gohda":
         tasks.extend([
-            #scheduler.schedule_dm_blank_message(environments.MEMBER_LIST, environments.QUOTE_DELAY, logger),
-            #scheduler.schedule_gif(environments.GIF_CHANNEL_ID, environments.GIF_DELAY, logger),
-            #scheduler.schedule_mention(environments.QUOTE_CHANNEL_ID, environments.QUOTE_DELAY, environments.MEMBER_LIST, bot_type, logger),
-            #scheduler.schedule_dispatch_vn_tl_message(environments.VN_TL_CHANNEL_ID, environments.VG_VN_MESSAGE_DELAY, logger),
-            #scheduler.schedule_dispatch_vg_releases_message(environments.VG_RELEASES_CHANNEL_ID, environments.VG_VN_MESSAGE_DELAY, logger),
-            #scheduler.schedule_dispatch_csgo_trades_skins(environments.ZBIYEB_ID, environments.CSGO_SKINS_NEWS_CHANNEL_ID, environments.VG_VN_MESSAGE_DELAY, logger),
-            #scheduler.schedule_dispatch_ln_wn_news(environments.ZBIYEB_ID, environments.LN_WN_NEWS_CHANNEL_ID, environments.VG_VN_MESSAGE_DELAY, logger),
-            #scheduler.schedule_dispatch_financial_markets_news(environments.OWNER_ID, environments.CRYPTO_ETF_NEW_CHANNEL_ID, environments.VG_VN_MESSAGE_DELAY, logger)
+            scheduler.schedule_dm_blank_message(environments.MEMBER_LIST, environments.QUOTE_DELAY, logger),
+            scheduler.schedule_gif(environments.GIF_CHANNEL_ID, environments.GIF_DELAY, logger),
+            scheduler.schedule_mention(environments.QUOTE_CHANNEL_ID, environments.QUOTE_DELAY, environments.MEMBER_LIST, bot_type, logger),
+            scheduler.schedule_dispatch_vn_tl_message(environments.VN_TL_CHANNEL_ID, environments.VG_VN_MESSAGE_DELAY, logger),
+            scheduler.schedule_dispatch_vg_releases_message(environments.VG_RELEASES_CHANNEL_ID, environments.VG_VN_MESSAGE_DELAY, logger),
+            scheduler.schedule_dispatch_csgo_trades_skins(environments.ZBIYEB_ID, environments.CSGO_SKINS_NEWS_CHANNEL_ID, environments.VG_VN_MESSAGE_DELAY, logger),
+            scheduler.schedule_dispatch_ln_wn_news(environments.ZBIYEB_ID, environments.LN_WN_NEWS_CHANNEL_ID, environments.VG_VN_MESSAGE_DELAY, logger),
+            scheduler.schedule_dispatch_financial_markets_news(environments.OWNER_ID, environments.CRYPTO_ETF_NEW_CHANNEL_ID, environments.VG_VN_MESSAGE_DELAY, logger)
         ])
     elif bot_type == "zaim":
         tasks.extend([
