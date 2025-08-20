@@ -97,11 +97,13 @@ class TicTacToeGame:
 
     def bot_move(self):
         mv = self.find_winning_move(self.bot_sym)
-        if mv: return mv
+        if mv: 
+            return mv
         mv = self.find_winning_move(self.user_sym)
-        if mv: return mv
+        if mv: 
+            return mv
         center = self.size
-        if self.board[center][center] == " ":
+        if 0 <= center < self.size and self.board[center][center] == " ":
             return (center, center)
         for r in range(self.size):
             for c in range(self.size):
