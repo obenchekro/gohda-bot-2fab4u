@@ -5,7 +5,7 @@ class TicTacToeGame:
         self.channel_id = channel_id
         self.user_id = user_id
         self.size = size
-        self.board = [[" "]*size for _ in range(size)]
+        self.board = [[" "] * size for _ in range(size)]
         self.user_sym = "X"
         self.bot_sym = "O"
         self.active = True
@@ -111,7 +111,7 @@ class TicTacToeGame:
                     return (r, c)
         return (0, 0)
 
-    def handle_message(self, content: str):
+    def handle_message(self, content):
         if not self.active:
             return None
 
