@@ -2,9 +2,14 @@ import asyncio
 import re
 
 class MessagingService:
+    TYPING_MAX_DELAY = 3
+    TYPING_CHARS_PER_SECOND = 20
+
     async def post_message(self, channel_id, message, logger):
         channel = await self.fetch_channel(channel_id)
-        await channel.send(message)
+        async with channel.typing():  
+            await asyncio.sleep(min(self.TYPING_MAX_DELAY, len(message) / self.TYPING_CHARS_PER_SECOND))
+            await channel.send(message)
         logger.info(f"message '{message}' has been successfully rendered...")
     
     async def send_gif(self, channel_id, logger):
