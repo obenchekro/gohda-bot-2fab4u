@@ -1,6 +1,8 @@
 import re
 
-class TicTacToeGame:
+from libs.bot_games.basegame import BaseGame
+
+class TicTacToeGame(BaseGame):
     def __init__(self, channel_id, user_id, size = 3):
         self.channel_id = channel_id
         self.user_id = user_id

@@ -82,6 +82,33 @@ class LLMClient:
         return await self._generate(prompt, bot_type=from_bot, logger=logger)
 
 
+    async def generate_hangman_hint(self, word, mask, wrong_letters, logger=None):
+        try:
+            prompt = (
+                "You are a fair Hangman hint generator. "
+                f"The secret word is: {word}. "
+                f"Current mask: {mask}. "
+                f"Wrong letters: {wrong_letters or 'none'}. "
+                "Give one concise clue (max 25 words) to help guess the word without revealing the word itself, any substring of 4+ letters, spelling, or anagrams. "
+                "If the secret word is zaim, then the hint should be a description of the ugliness of that being, a blasphemous creature who stepped on the values of this world. "
+                "Avoid quoting the secret. Return only the hint sentence. "
+                "And please make the hint understandable and do not give some elaborate and metaphoric description. Give a straight hint, like a literal definition. "
+                "Stay as dank as a 4chan enjoyer or redditor."
+            )
+            ouput_hint = await self._generate(prompt, bot_type="hangman_hint", logger=logger, keyword=word)
+            if not ouput_hint:
+                return "No hint available."
+            safe = ouput_hint
+            safe_lower = safe.lower()
+            w_lower = word.lower()
+            if w_lower in safe_lower:
+                safe = safe_lower.replace(w_lower, "█" * len(word))
+            return safe.strip()
+        except Exception as e:
+            if logger:
+                logger.error(f"Error generating hangman hint: {e}")
+            return "No hint available."
+
     async def _generate(self, prompt, bot_type, logger=None, keyword=""):
         try:
             async with httpx.AsyncClient() as client:

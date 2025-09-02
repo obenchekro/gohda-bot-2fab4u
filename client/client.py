@@ -1,4 +1,3 @@
-import asyncio
 import re
 import discord
 from discord import app_commands
@@ -6,14 +5,13 @@ import os
 import sys
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 
-from libs.bot_games.tic_tac_toe import TicTacToeGame
 from libs.dank_meme_extractor.tenor_client import TenorClient
 from libs.llm_integrator.llm_client import LLMClient
 from libs.reddit_threads.reddit_client import RedditVNTLFetcher
 
-from services import MessagingService, ClashService, TTTService, NewsDispatcherService, UtilsService
+from services import MessagingService, ClashService, TTTService, NewsDispatcherService, UtilsService, HangmanService
 
-class DiscordClient(MessagingService, ClashService, TTTService, NewsDispatcherService, UtilsService, discord.Client):
+class DiscordClient(MessagingService, ClashService, TTTService, HangmanService, NewsDispatcherService, UtilsService, discord.Client):
     def __init__(self, token, giphy_token, reddit_client_id, reddit_client_secret, bot_type, logger=None):
         intents = discord.Intents.default()
         intents.messages = True
@@ -68,6 +66,9 @@ class DiscordClient(MessagingService, ClashService, TTTService, NewsDispatcherSe
                     return
 
                 if await self.handle_ttt(message, cleaned_msg, logger):
+                    return
+
+                if await self.handle_hangman(message, cleaned_msg, logger):
                     return
                             
                 if cleaned_msg.lower() == "man":

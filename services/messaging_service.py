@@ -77,6 +77,7 @@ class MessagingService:
                         "🔫 `@bot csgo` → Sends the latest trendy csgo trades from reddit (automated).\n"
                         "📚 `@bot ln` → Sends the latest light novel/web novel news from reddit (automated).\n"
                         "🎲 `@bot ttt [N]` → Start a Tic-Tac-Toe game (default 3x3, choose size with N). For rules, type `@bot ttt rules`.\n"
+                        "🪢 `@bot hm` → Start a Hangman game. For rules, type `@bot hm rules`.\n"
                         "💣 `@bot punish @user` → Plays Russian Roulette by sending a blank DM to the target.\n"
                     )
             await self.post_message(channel, manual, logger)
